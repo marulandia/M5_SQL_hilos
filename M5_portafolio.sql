@@ -18,7 +18,9 @@ CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`Hilos`
+-- Table `mydb`.`Hilos`: La tabla Hilos almacena la información de cada hilo en inventario. 
+-- Tiene un identificador único autoincremental (id_hilo), el nombre del color y un código de color que no se puede repetir, además de la cantidad disponible, 
+-- que no puede ser negativa, y la fecha de ingreso al sistema. De esta forma se garantiza que cada hilo quede registrado de manera única y con control sobre su stock.
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Hilos` ;
 
@@ -35,7 +37,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Hilos` (
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Proveedores`
+-- Table `mydb`.`Proveedores`: La tabla Proveedores guarda la información de las empresas que suministran hilos. Cada proveedor tiene un identificador único autoincremental (id_proveedores), 
+-- junto con su nombre, dirección, teléfono y correo de contacto, todos obligatorios. El campo nombre está definido como único para evitar que se registren dos proveedores con el mismo nombre
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Proveedores` ;
 
@@ -51,7 +54,8 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Clientes`
+-- Table `mydb`.`Clientes`: La tabla Clientes almacena los datos de los clientes que realizan compras. Cada cliente tiene un identificador único autoincremental (id_cliente) como clave primaria. 
+-- Los campos de nombre, dirección y teléfono son opcionales, mientras que el correo electrónico puede registrarse o no, pero en caso de existir debe ser único para evitar duplicados.
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Clientes` ;
 
@@ -66,7 +70,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Ventas`
+-- Table `mydb`.`Ventas`: La tabla Ventas registra cada operación de compra realizada por los clientes. 
+-- Cada venta tiene un identificador único autoincremental (id_ventas), la fecha y hora en que ocurrió (fecha_venta) y la referencia al cliente que la realizó (Clientes_id_cliente). 
+-- La clave primaria se compone de id_ventas y Clientes_id_cliente, y se establece una clave foránea hacia la tabla Clientes para mantener la integridad de los datos
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Ventas` ;
 
@@ -85,7 +91,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Proveedores_has_Hilos`
+-- Table `mydb`.`Proveedores_has_Hilos`: La tabla Proveedores_has_Hilos es una tabla puente que representa la relación muchos a muchos entre los proveedores y los hilos. 
+-- Cada fila asocia un proveedor con un hilo específico, y su clave primaria está compuesta por ambas columnas (Proveedores_id_proveedores, Hilos_id_hilo) para garantizar que no se repita la misma combinación. 
+-- Incluye claves foráneas hacia las tablas Proveedores e Hilos, con la opción ON DELETE CASCADE para que, si se elimina un proveedor o un hilo, se borren automáticamente sus asociaciones en esta tabla.
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Proveedores_has_Hilos` ;
 
@@ -109,7 +117,10 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Ventas_has_Hilos`
+-- Table `mydb`.`Ventas_has_Hilos`: La tabla Ventas_has_Hilos almacena el detalle de cada venta, indicando qué hilos se vendieron y en qué cantidad. Su clave primaria es compuesta (Ventas_id_ventas, Hilos_id_hilo)
+-- lo que garantiza que en una venta no se repita el mismo hilo dos veces. El campo Cantidad es obligatorio y tiene una restricción CHECK que asegura que siempre sea mayor que cero. 
+-- Además, incluye claves foráneas hacia las tablas Ventas e Hilos, ambas con ON DELETE CASCADE, de modo que si se elimina una venta o un hilo, sus registros relacionados en esta tabla también se 
+-- eliminan automáticamente.
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `mydb`.`Ventas_has_Hilos` ;
 
@@ -138,7 +149,7 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
--- POBLAR TABLAS 
+-- Poblar las tablas 
 INSERT INTO Clientes (nombre, direccion, telefono, correo)
 VALUES
 ('Juan Pérez', 'Av. Siempre Viva 123', '555-1234', 'juan@example.com'),
